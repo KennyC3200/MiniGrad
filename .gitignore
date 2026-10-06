@@ -1,0 +1,9 @@
+# CMake build output (includes Catch2, fetched by FetchContent at configure time)
+build/
+out/
+cmake-build-*/
+
+# IDE / editor
+.vs/
+.vscode/
+.idea/
