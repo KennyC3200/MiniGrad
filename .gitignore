@@ -3,7 +3,14 @@ build/
 out/
 cmake-build-*/
 
+# Copied to the project root by CMake for clangd (see CMakeLists.txt)
+compile_commands.json
+
+# Personal CMake presets (CMakePresets.json is shared, this one is not)
+CMakeUserPresets.json
+
 # IDE / editor
 .vs/
 .vscode/
 .idea/
+.cache/
