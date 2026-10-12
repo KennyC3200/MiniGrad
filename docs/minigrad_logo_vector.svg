@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1254" height="1254" viewBox="0 0 1254 1254" role="img" aria-labelledby="title desc">
+  <title id="title">MiniGrad</title>
+  <desc id="desc">Minimal MiniGrad wordmark over a blue-to-violet loss surface with a gradient-descent path.</desc>
+  <defs>
+    <linearGradient id="surface" x1="0.10" y1="0.22" x2="0.92" y2="0.92">
+      <stop offset="0" stop-color="#b8d9ff"/>
+      <stop offset="0.42" stop-color="#9dbdff"/>
+      <stop offset="0.72" stop-color="#a1a6ff"/>
+      <stop offset="1" stop-color="#8873ee"/>
+    </linearGradient>
+    <linearGradient id="fold" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#d3e7ff" stop-opacity="0.44"/>
+      <stop offset="1" stop-color="#6d68e9" stop-opacity="0.34"/>
+    </linearGradient>
+    <linearGradient id="descent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.76"/>
+      <stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1254" height="1254" fill="#ffffff"/>
+
+  <!-- Minimal 3D loss surface -->
+  <path d="M210 543
+           C273 514 333 470 380 414
+           C405 384 420 367 438 368
+           C489 369 542 426 589 489
+           C641 559 680 641 733 688
+           C766 717 802 725 841 704
+           C900 675 973 623 1040 610
+           C992 663 949 727 904 791
+           C863 850 810 899 759 902
+           C710 904 665 864 621 821
+           C570 771 523 726 474 696
+           C411 657 332 602 210 543 Z"
+        fill="url(#surface)"/>
+
+  <!-- Very subtle surface folds add depth without visual clutter -->
+  <path d="M438 369
+           C493 394 548 459 591 529
+           C636 602 670 670 727 711
+           C774 745 824 730 871 701
+           C830 760 795 814 759 902
+           C710 903 665 864 621 821
+           C570 771 523 726 474 696
+           C536 719 581 760 628 801
+           C670 838 707 858 742 854
+           C698 810 661 759 630 704
+           C590 631 560 547 518 478
+           C490 432 462 393 438 369 Z"
+        fill="url(#fold)" opacity="0.56"/>
+
+  <!-- Gradient-descent trajectory -->
+  <path d="M535 655
+           C548 684 569 704 594 721
+           C612 733 625 746 639 763
+           C654 782 665 795 680 798
+           C699 819 713 843 741 868"
+        fill="none" stroke="url(#descent)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#ffffff">
+    <circle cx="535" cy="655" r="10.5"/>
+    <circle cx="614" cy="735" r="10.5"/>
+    <circle cx="679" cy="798" r="10.5"/>
+    <circle cx="741" cy="868" r="11.5"/>
+  </g>
+
+  <!-- Text remains editable and uses Inter where available, with sans-serif fallbacks. -->
+  <text x="279" y="621" font-family="Inter, Arial, Helvetica, sans-serif" font-size="160" font-weight="700" letter-spacing="-4.5" fill="#111214">MiniGrad</text>
+</svg>
