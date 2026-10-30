@@ -2,7 +2,6 @@
 
 #include "IntrusivePtr.hpp"
 #include "TensorImpl.hpp"
-#include <cstddef>
 
 namespace mg {
 

@@ -38,6 +38,7 @@ struct CPUAllocator final : Allocator {
 static CPUAllocator g_cpu_alloc;
 
 // Register the CPU allocator in the global array of allocators
+// Have to be via constructing a struct because this is when the dll is loaded into memory
 REGISTER_ALLOCATOR(DeviceType::CPU, &g_cpu_alloc);
 
 void SetCPUAllocator(Allocator* allocator) {
@@ -45,7 +46,7 @@ void SetCPUAllocator(Allocator* allocator) {
 }
 
 Allocator* GetCPUAllocator() {
-    return &g_cpu_alloc;
+    return GetAllocator(DeviceType::CPU);
 }
 
 }

@@ -1,6 +1,4 @@
-#pragma once
-
-namespace Autograd {
+namespace mg {
 
 class Model {
 };

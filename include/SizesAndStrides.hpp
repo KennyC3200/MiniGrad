@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Exception.hpp"
-#include <cstdint>
 #include <cstddef>
 #include <cstring>
 
@@ -136,16 +135,14 @@ public:
     }
 
 private:
-    void InternalAssertSizeAndStride(std::size_t idx) const {
-#ifdef MINIGRAD_DEBUG
-        INTERNAL_ASSERT_DEBUG_ONLY(idx < m_rank);
-#endif
+    void InternalAssertSizeAndStride([[maybe_unused]] std::size_t idx) const {
+        INTERNAL_ASSERT_DEBUG_ONLY(idx < m_rank, "Index {} out of range for rank {}", idx, m_rank);
     };
 
-    void InternalAssertRank(std::size_t rank) const {
-#ifdef MINIGRAD_DEBUG
-        INTERNAL_ASSERT_DEBUG_ONLY(rank <= MINIGRAD_TENSOR_MAX_RANK);
-#endif
+    void InternalAssertRank([[maybe_unused]] std::size_t rank) const {
+        INTERNAL_ASSERT_DEBUG_ONLY(
+            rank <= MINIGRAD_TENSOR_MAX_RANK, 
+            "Rank {} out of range {}", rank, MINIGRAD_TENSOR_MAX_RANK);
     }
 
     void CopyData(const SizesAndStrides& rhs) {

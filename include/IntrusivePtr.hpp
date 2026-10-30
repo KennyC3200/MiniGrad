@@ -5,9 +5,11 @@
 #include <cstdint>
 #include <utility>
 #include <cstddef>
-#include <memory>
 
 namespace mg {
+
+// Test-access struct
+namespace detail { struct IntrusivePtrTargetTestAccess; }
 
 struct DontIncreaseRefCount {};
 
@@ -88,11 +90,6 @@ protected:
     // Copy assignment
     IntrusivePtrTarget& operator=(const IntrusivePtrTarget&) noexcept { return *this; }
 
-#if defined(MINIGRAD_TESTS)
-    uint32_t TestingRefcount() const { return Refcount(std::memory_order_relaxed); }
-    uint32_t TestingWeakcount() const { return Weakcount(std::memory_order_relaxed); }
-#endif
-
 private:
     mutable std::atomic<uint64_t> m_combined_refcount;
     static_assert(sizeof(std::atomic<uint64_t>) == 8);
@@ -119,6 +116,9 @@ private:
     // But decrements need to check for zero needs release on the decrement itself and an acquire
     // fence, specifically on the branch that's about to delete--this avoids paying cost on every
     // decrement, only on the one that actually wins the race to destroy
+
+    // For testing
+    friend struct detail::IntrusivePtrTargetTestAccess;
 };
 
 template <class TargetType, class NullType = IntrusiveTargetDefaultNullType<TargetType>>

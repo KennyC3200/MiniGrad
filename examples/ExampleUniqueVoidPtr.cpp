@@ -10,8 +10,8 @@ void PtrCtxSameType() {
             std::cout << "PtrCtxSameType: delete successful" << std::endl;
         });
 
-    void* usable = ptr.Get();
-    void* ctx = ptr.GetContext();
+    void* usable = ptr.Get(); (void)usable;
+    void* ctx = ptr.GetContext(); (void)ctx;
 }
 
 constexpr std::size_t CUDA_OFFSET = 256;

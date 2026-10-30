@@ -4,7 +4,7 @@
 namespace mg {
 
 std::string Device::Str() const {
-    std::string s = DeviceTypeName(Type());
+    std::string s = DeviceTypeName(GetType());
     if (HasIdx()) {
         s.push_back(':');
         s.append(std::to_string(Idx()));

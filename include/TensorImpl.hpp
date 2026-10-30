@@ -1,12 +1,9 @@
 #pragma once
 
-#include "Allocator.hpp"
 #include "Device.hpp"
-#include "DeviceType.hpp"
 #include "IntrusivePtr.hpp"
 #include "Storage.hpp"
 #include "SizesAndStrides.hpp"
-#include <vector>
 
 namespace mg {
 
@@ -79,15 +76,16 @@ public:
         m_sizes_and_strides.Resize(new_size);
     }
 
-    std::size_t StorageOffset() { return m_storage_offset; }
-    DType DeviceType() { return m_dtype; }
-    Device GetDevice() { return m_device; }
+    std::size_t StorageOffset() const { return m_storage_offset; }
+    mg::DeviceType DeviceType() const { return m_device.GetType(); }
+    Device GetDevice() const { return m_device; }
+    DType GetDType() const { return m_dtype; }
 
 protected:
     Storage m_storage;
     SizesAndStrides m_sizes_and_strides;
 
-    std::size_t m_storage_offset;
+    std::size_t m_storage_offset = 0;
 
     DType m_dtype;
     Device m_device;

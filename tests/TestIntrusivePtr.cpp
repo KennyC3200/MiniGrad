@@ -1,6 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
 
-#define MINIGRAD_TESTS
 #include "IntrusivePtr.hpp"
 
 using mg::MakeIntrusive;
@@ -31,10 +30,24 @@ public:
     explicit DerivedTestObject(int value = 0) : TestObject(value) {}
 };
 
+namespace mg::detail {
+struct IntrusivePtrTargetTestAccess {
+    static uint32_t Refcount(const IntrusivePtrTarget& target) { return target.Refcount(); }
+    static uint32_t Weakcount(const IntrusivePtrTarget& target) { return target.Weakcount(); }
+};
+}
+
+// Basically an abstraction, but we really only need it to call Refcount and Weakcount with
+// the order = std::memory_order_relaxed (which is by default too)
 class InspectableTarget : public IntrusivePtrTarget {
 public:
-    uint32_t Refcount() const { return IntrusivePtrTarget::TestingRefcount(); }
-    uint32_t Weakcount() const { return IntrusivePtrTarget::TestingWeakcount(); }
+    uint32_t Refcount() const { 
+        return mg::detail::IntrusivePtrTargetTestAccess::Refcount(*this); 
+    }
+
+    uint32_t Weakcount() const { 
+        return mg::detail::IntrusivePtrTargetTestAccess::Weakcount(*this); 
+    }
 };
 
 void ResetCounters() {

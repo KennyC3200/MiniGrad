@@ -22,12 +22,18 @@ void Allocator::DefaultCopyData(void* dest, const void* src, std::size_t cnt) co
 }
 
 void SetAllocator(DeviceType type, Allocator* alloc) {
-    g_allocators[static_cast<int>(type)] = alloc;
+    g_allocators[static_cast<std::size_t>(type)] = alloc;
 }
 
 Allocator* GetAllocator(const DeviceType& type) {
     auto* alloc = g_allocators[static_cast<int>(type)];
+
+    // Use the ifdef to prevent calling DeviceTypeName
+    // TODO: Maybe change this to a macro instead
+#ifdef MINIGRAD_DEBUG
     INTERNAL_ASSERT_DEBUG_ONLY(alloc, "Allocator {} didn't get set", DeviceTypeName(type));
+#endif
+
     return alloc;
 }
 

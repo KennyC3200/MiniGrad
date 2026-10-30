@@ -16,11 +16,12 @@ void ASSERT(bool condition, std::format_string<Args...> fmt, Args&&... args)
 
 template <typename... Args>
 void INTERNAL_ASSERT_DEBUG_ONLY(
-    bool condition, std::format_string<Args...> fmt, 
-    Args&&... args) 
+    [[maybe_unused]] bool condition, 
+    [[maybe_unused]] std::format_string<Args...> fmt, 
+    [[maybe_unused]] Args&&... args) 
 {
 #ifdef MINIGRAD_DEBUG
-    ASSERT(condition, fmt, loc, args);
+    ASSERT(condition, fmt, std::forward<Args>(args)...);
 #endif
 }
 

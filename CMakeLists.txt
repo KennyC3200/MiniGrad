@@ -65,8 +65,14 @@ file(GLOB_RECURSE MINIGRAD_SOURCES CONFIGURE_DEPENDS
 file(GLOB_RECURSE MINIGRAD_HEADERS CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp")
 
-add_library(minigrad STATIC ${MINIGRAD_SOURCES} ${MINIGRAD_HEADERS})
+# Shared so every object file is linked in. As a static library, the linker drops object files
+# nothing references, which silently skips static registrations like REGISTER_ALLOCATOR
+add_library(minigrad SHARED ${MINIGRAD_SOURCES} ${MINIGRAD_HEADERS})
 add_library(minigrad::minigrad ALIAS minigrad)
+
+# MSVC exports nothing from a DLL by default, and without exports no import library is produced.
+# This exports all functions and methods (but not global variables) without dllexport annotations
+set_target_properties(minigrad PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 # Anything that links minigrad also needs C++20 to compile its headers
 target_compile_features(minigrad PUBLIC cxx_std_20)
