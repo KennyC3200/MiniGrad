@@ -4,7 +4,6 @@
 #include "Allocator.hpp"
 #include "Device.hpp"
 #include "DeviceType.hpp"
-#include <cstdint>
 
 namespace mg {
 

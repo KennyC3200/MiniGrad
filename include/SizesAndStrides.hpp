@@ -1,13 +1,16 @@
 #pragma once
 
 #include "Exception.hpp"
+
 #include <cstddef>
 #include <cstring>
+#include <span>
 
 namespace mg {
 
 constexpr std::size_t MINIGRAD_TENSOR_MAX_RANK = 3;
 
+// Defaults: rank = 1, size = 0, stride = 1
 class SizesAndStrides {
 public:
     using SizesIterator = std::size_t*;
@@ -106,6 +109,11 @@ public:
 
     StridesConstIterator StridesEnd() const noexcept {
         return &m_storage[MINIGRAD_TENSOR_MAX_RANK + m_rank];
+    }
+
+    void SetSizes(std::span<const std::size_t> sizes) {
+        Resize(sizes.size());
+        std::copy(sizes.begin(), sizes.end(), SizesBegin());
     }
 
     void Resize(std::size_t new_rank) {

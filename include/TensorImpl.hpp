@@ -5,7 +5,15 @@
 #include "Storage.hpp"
 #include "SizesAndStrides.hpp"
 
+#include <span>
+#include <cstdint>
+#include <memory>
+
 namespace mg {
+
+struct AutogradMetadata;
+class TensorBase;
+class Tensor;
 
 enum class DType {
     Float32,
@@ -17,18 +25,14 @@ enum class DType {
 struct TensorImpl : public IntrusivePtrTarget {
 public:
     TensorImpl() = delete;
-    ~TensorImpl() override = default;
-    TensorImpl(Storage&& storage, DType dtype, Device device) 
-        : m_storage(std::move(storage)), m_dtype(dtype), m_device(device) {}
+    ~TensorImpl() override;
+    TensorImpl(Storage&& storage, DType dtype, Device device);
 
-    // Sizes and strides
-    SizesAndStrides GetSizesAndStrides() { return m_sizes_and_strides; }
+    const SizesAndStrides& GetSizesAndStrides() const { return m_sizes_and_strides; }
+
     std::size_t Rank() const noexcept { return m_sizes_and_strides.Rank(); }
-    std::size_t SizeAt(std::size_t size_idx) const noexcept {
-        return m_sizes_and_strides.SizeAt(size_idx);
-    }
 
-    std::size_t& SizeAt(std::size_t size_idx) noexcept { 
+    std::size_t SizeAt(std::size_t size_idx) const noexcept {
         return m_sizes_and_strides.SizeAt(size_idx);
     }
 
@@ -52,10 +56,6 @@ public:
         return m_sizes_and_strides.StrideAt(stride_idx);
     }
 
-    std::size_t& StrideAt(std::size_t stride_idx) noexcept { 
-        return m_sizes_and_strides.StrideAt(stride_idx);
-    }
-
     SizesAndStrides::StridesIterator StridesBegin() noexcept {
         return m_sizes_and_strides.StridesBegin();
     }
@@ -72,23 +72,90 @@ public:
         return m_sizes_and_strides.StridesEnd();
     }
 
-    void Resize(std::size_t new_size) {
-        m_sizes_and_strides.Resize(new_size);
-    }
+    void Resize(std::size_t new_rank);
+
+    void SetSizesContiguous(std::span<const std::size_t> sizes);
+
+    void SetSizesAndStrides(std::span<const std::size_t> sizes,
+                            std::span<const std::size_t> strides);
+
+    void SetStorageOffset(std::size_t offset) { m_storage_offset = offset; }
 
     std::size_t StorageOffset() const { return m_storage_offset; }
+
     mg::DeviceType DeviceType() const { return m_device.GetType(); }
-    Device GetDevice() const { return m_device; }
+
     DType GetDType() const { return m_dtype; }
 
-protected:
+    Device GetDevice() const { return m_device; }
+
+    std::span<const std::size_t> Sizes() const { 
+        return std::span<const std::size_t>(
+            m_sizes_and_strides.SizesBegin(), 
+            m_sizes_and_strides.SizesEnd());
+    }
+
+    std::span<const std::size_t> Strides() const {
+        return std::span<const std::size_t>(
+            m_sizes_and_strides.StridesBegin(),
+            m_sizes_and_strides.StridesEnd());
+    }
+
+    std::size_t Numel() const { return m_numel; }
+
+    bool IsContiguous() const { return m_contiguous; }
+
+    std::size_t ItemSize() const;
+
+    const void* Data() const {
+        return static_cast<const std::uint8_t*>(m_storage.Data()) + StorageOffset() * ItemSize();
+    }
+
+    void* MutableData() { 
+        return static_cast<std::uint8_t*>(m_storage.MutableData()) + StorageOffset() * ItemSize(); 
+    }
+
+    bool RequiresGrad() const;
+
+    void SetRequiresGrad(bool requires_grad);
+
+    const Tensor& Grad() const;
+
+    Tensor& MutableGrad();
+
+    IntrusivePtr<TensorImpl> ShallowCopyAndDetach() const;
+
+private:
     Storage m_storage;
     SizesAndStrides m_sizes_and_strides;
 
+    // Starting index, measured in number of elements and NOT bytes
     std::size_t m_storage_offset = 0;
 
     DType m_dtype;
     Device m_device;
+
+    // Caches the numel. Should be called at the end of every size change
+    void RefreshNumel() {
+        m_numel = ComputeNumel();
+    }
+
+    // Returns a numel that accounts for overflow
+    std::size_t ComputeNumel() const;
+
+    // Cache the number of elements b/c it is constantly being used
+    std::size_t m_numel = 0;
+
+    // Cache if the tensor is contiguous or not
+    bool m_contiguous = false;
+
+    void RefreshContiguous() { m_contiguous = ComputeContiguous(); }
+
+    bool ComputeContiguous() const;
+
+    void RestrideContiguous();
+
+    std::unique_ptr<AutogradMetadata> m_autograd_metadata;
 };
 
 }

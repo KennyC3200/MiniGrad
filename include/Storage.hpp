@@ -40,15 +40,24 @@ public:
         resizable)) {}
     
     std::size_t SizeBytes() const { return m_storage_impl->SizeBytes(); }
+
     const void* Data() const { return m_storage_impl->Data(); }
     void* MutableData() { return m_storage_impl->MutableData(); }
+
     bool Resizable() const { return m_storage_impl->Resizable(); }
+
     mg::Allocator* Allocator() const { return m_storage_impl->Allocator(); }
+
     mg::DeviceType DeviceType() const { return m_storage_impl->Device().GetType(); }
+
     mg::Device Device() const { return m_storage_impl->Device(); }
+
     const mg::DataPtr& DataPtr() const { return m_storage_impl->DataPtr(); }
+
     operator bool() const { return m_storage_impl.Defined(); }
+
     std::size_t UseCount() const { return m_storage_impl.UseCount(); }
+
     inline bool Unique() const { return m_storage_impl.Unique(); }
 
 protected:
