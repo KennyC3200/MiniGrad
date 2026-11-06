@@ -8,7 +8,7 @@
 namespace mg {
 
 struct AutogradMetadata final {
-    bool m_required_grad = false;
+    bool m_requires_grad = false;
 
     // Undefined until the first backprop writes into it
     Tensor m_grad;

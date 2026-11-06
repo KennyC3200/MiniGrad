@@ -99,13 +99,14 @@ std::size_t TensorImpl::ComputeNumel() const {
 }
 
 bool TensorImpl::RequiresGrad() const {
-    return m_autograd_metadata && m_autograd_metadata->m_required_grad;
+    return m_autograd_metadata 
+        && (m_autograd_metadata->m_requires_grad || m_autograd_metadata->m_grad_fn != nullptr);
 }
 
 void TensorImpl::SetRequiresGrad(bool requires_grad) {
     if (!requires_grad && !m_autograd_metadata) return;
     if (!m_autograd_metadata) m_autograd_metadata = std::make_unique<AutogradMetadata>();
-    m_autograd_metadata->m_required_grad = requires_grad;
+    m_autograd_metadata->m_requires_grad = requires_grad;
 }
 
 const Tensor& TensorImpl::Grad() const {
